@@ -7,5 +7,7 @@
 			"path": "../python"
 		}
 	],
-	"settings": {}
+	"settings": {
+		"bigquery.outputFormat": "table"
+	}
 }
