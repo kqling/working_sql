@@ -14,6 +14,7 @@ from
     from
         (select
             parse_date('%Y%m%d',summary_date) as date,
+            summary_date,
             case when config_name = 'US_default_0806' then 'control' else 'test' end as ab_group,
             user_pseudo_id,
             ad_id,
@@ -26,12 +27,12 @@ from
         and country = 'United States'
         and ad_type = 'interstitial'
         and config_name in ('US_test_0806','US_default_0806')
-        group by 1,2,3,4,5
+        group by 1,2,3,4,5,6
         having total_show between 0 and 1000000) s
-    LEFT JOIN `blockpuzzle-f21e1.learnings_data_warehouse_android.fact_dws_iaa_unitEcpm_a` e   
-    ON s.date = e.date
+    LEFT JOIN `blockpuzzle-f21e1.bi_data_warehouse.unit_ecpm_android` e   
+    ON s.summary_date = e.date
     AND s.ad_id = e.unit_id
-    and s.country = e.country_name
+    and s.country = e.country
     group by 1,2,3)
 group by 1,2
 order by 1,2
