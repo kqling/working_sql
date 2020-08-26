@@ -24,12 +24,12 @@ FROM
                 app_version,
                 ad_id,
                 country,
-                date_add(current_date(), interval -14 day) as date,
+                date_add(@run_date, interval -7 day) as date,
                 SUM(true_show) as total_show
             from `blockpuzzle-f21e1.bi_data_warehouse.adsdk_events_ios_*`
-            where parse_date('%Y%m%d',_table_suffix) between date_add(current_date(), interval -14 day) and current_date()
-            AND DATE_ADD(parse_date('%Y%m%d',_table_suffix),interval 0-living_days DAY) = date_add(current_date(), interval -14 day)
-            and parse_date('%Y%m%d',summary_date) between date_add(current_date(), interval -14 day) and date_add(current_date(), interval -7 day)
+            where parse_date('%Y%m%d',_table_suffix) between date_add(@run_date, interval -7 day) and @run_date
+            AND DATE_ADD(parse_date('%Y%m%d',_table_suffix),interval 0-living_days DAY) = date_add(@run_date, interval -7 day)
+            and parse_date('%Y%m%d',summary_date) between date_add(@run_date, interval -7 day) and @run_date
             and country = 'United States'
             GROUP BY 1,2,3,4,5,6
             HAVING total_show > 0 and total_show < 1000000) s
