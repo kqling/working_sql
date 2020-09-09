@@ -12,7 +12,7 @@ function QueryData() {
   
   var cfg_sheet =  SpreadsheetApp.getActiveSpreadsheet().getSheetByName("CONFIG");
   var config = cfg_sheet.getRange(1, 1, cfg_sheet.getLastRow(), 2).getValues();
-  
+
   var start_date = cfg_sheet.getRange(2, 4).getValue();
   var end_date = cfg_sheet.getRange(2, 5).getValue();
   var pre_date = date_interval(start_date, end_date);
