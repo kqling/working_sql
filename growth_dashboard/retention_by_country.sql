@@ -2,11 +2,7 @@ SELECT
     date,
     platform,
     country,
-    active_users,
-    active_retended as D1_active_retended,
     cast(active_retended as float64)/active_users as D1_active_retention,
-    new_users,
-    new_retended as D1_new_retended,
     cast(new_retended as float64)/new_users as D1_new_retention
 FROM
     (SELECT

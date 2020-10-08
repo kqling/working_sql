@@ -50,7 +50,7 @@ FROM
                 CASE when living_days = 0 then 'new' else 'old' end as user_type,
                 user_pseudo_id
             FROM `blockpuzzle-f21e1.learnings_data_warehouse_android.analytics_dm_action_userPrimaryMetric_di_*`
-            WHERE date BETWEEN DATE_ADD(CURRENT_DATE(), interval -11 DAY) AND DATE_ADD(CURRENT_DATE(), interval -3 DAY)) u 
+            WHERE date BETWEEN DATE_ADD(CURRENT_DATE(), interval -11 DAY) AND DATE_ADD(CURRENT_DATE(), interval -9 DAY)) u 
         LEFT JOIN
             (SELECT
                 distinct date, user_pseudo_id
