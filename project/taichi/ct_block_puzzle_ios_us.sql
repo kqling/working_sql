@@ -1,53 +1,42 @@
 SELECT
-    date,
+    @run_date as date,
+    create_date,
     user_pseudo_id,
     app_version,
-    two_day_revenue,
-    four_day_revenue,
-    six_day_revenue,
-    two_day_rank_perc,
-    four_day_rank_perc,
-    six_day_rank_perc
+    ad_revenue,
+    rank_perc
 FROM
     (SELECT
-        date,
+        create_date,
         user_pseudo_id,
         app_version,
-        two_day_revenue,
-        four_day_revenue,
-        six_day_revenue,
-        percent_rank() OVER(partition by date ORDER BY two_day_revenue DESC) as two_day_rank_perc,
-        percent_rank() OVER(partition by date ORDER BY four_day_revenue DESC) as four_day_rank_perc,
-        percent_rank() OVER(partition by date ORDER BY six_day_revenue DESC) as six_day_rank_perc
+        ad_revenue,
+        percent_rank() OVER(partition by create_date ORDER BY ad_revenue DESC) as rank_perc
     FROM
         (SELECT
-            u.date,
+            u.create_date,
             u.user_pseudo_id,
             u.app_version,
-            ad.two_day_revenue,
-            ad.four_day_revenue,
-            ad.six_day_revenue
+            ad.ad_revenue
         FROM
             (SELECT
-                create_date as date,
+                create_date,
                 user_pseudo_id,
                 app_version
             FROM `blockpuzzle-f21e1.learnings_data_warehouse_ios.dim_dwd_action_userInfo_a`
             WHERE first_day_geo.country = 'United States'
-            AND create_date = DATE_ADD(@run_date, interval -8 day)
+            AND create_date between DATE_ADD(@run_date, interval -8 day) and DATE_ADD(@run_date, interval -2 day)
             ) u
         LEFT JOIN
             (SELECT
                 user_pseudo_id,
-                SUM(CASE when date between date_add(@run_date, interval -8 day) and date_add(@run_date, interval -7 day) then ad_revenue else 0 end) as two_day_revenue,
-                SUM(CASE when date between date_add(@run_date, interval -8 day) and date_add(@run_date, interval -5 day) then ad_revenue else 0 end) as four_day_revenue,
-                SUM(ad_revenue) as six_day_revenue
+                SUM(ad_revenue) as ad_revenue
             FROM `blockpuzzle-f21e1.learnings_data_warehouse_ios.analytics_dm_action_userPrimaryMetric_di_*`
-            WHERE date between DATE_ADD(@run_date, interval -8 day) and @run_date
-            AND create_date = DATE_ADD(@run_date, interval -8 day)
+            WHERE date between DATE_ADD(@run_date, interval -8 day) and DATE_ADD(@run_date, interval -2 day)
+            AND create_date between DATE_ADD(@run_date, interval -8 day) and DATE_ADD(@run_date, interval -2 day)
             GROUP BY 1
             ) ad
         ON u.user_pseudo_id = ad.user_pseudo_id
         )
     )
-WHERE (two_day_rank_perc <= 0.3 or four_day_rank_perc <= 0.3 or six_day_rank_perc <= 0.3)
+WHERE rank_perc <= 0.3
