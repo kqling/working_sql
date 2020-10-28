@@ -340,6 +340,7 @@ function onOpen() {
       var d7_retention = 'SELECT\
           date,\
           case when platform is null then \'All\' else platform end as platform,\
+          \'All\' as country, \
           cast(active_retended as float64)/active_users as D1_active_retention,\
           cast(new_retended as float64)/new_users as D1_new_retention\
       FROM\
