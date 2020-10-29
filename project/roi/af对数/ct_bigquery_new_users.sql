@@ -4,6 +4,7 @@ SELECT
     distinct u.create_date,
     u.user_pseudo_id,
     uuid.uuid,
+    uuid.advertising_id,
     u.country,
     u.media_source,
     u.app_version -- 只有1.9.0以上版本才会发uuid
@@ -20,7 +21,8 @@ LEFT JOIN
     (SELECT 
         distinct parse_date('%Y%m%d',_table_suffix) as create_date,
         user_pseudo_id,
-        up.value.string_value as uuid
+        up.value.string_value as uuid,
+        device.advertising_id as advertising_id
     FROM `blockpuzzle-f21e1.learnings_data_warehouse_android.fact_ods_action_basicEvents_di_*`,
     UNNEST(user_properties) as up
     WHERE _table_suffix between '20200918' and '20200920'
